@@ -4,10 +4,14 @@ from validator import PlanilhaVendas
 from pydantic import ValidationError
 
 def read_data(df):
+    progress_bar = st.progress(0)
+    total_rows = len(df)
     error = []
     valid_rows = []
 
-    for index, row in df.iterrows():
+    for i, row in df.iterrows():
+        progress_bar.progress((i + 1) / total_rows)
+        
         try:
             data = row.to_dict()
             
@@ -15,7 +19,7 @@ def read_data(df):
             valid_rows.append(valid_schema)
             
         except ValidationError as e:
-            error.append(f"Erro na linha {index + 2}: {str(e)}")
+            error.append(f"Erro na linha {i + 2}: {str(e)}")
             
     return valid_rows, error
 
@@ -43,15 +47,15 @@ def main():
                     else:
                         st.success("Todos os dados são válidos!")
                     
-                    st.write(f"Número de registros válidos: {len(valid_rows)}")
-                    
-                    valid_df = pd.DataFrame([data.model_dump() for data in valid_rows])
-                    st.download_button(
-                        label="Baixar dados válidos como CSV",
-                        data=valid_df.to_csv(index=False),
-                        file_name='dados_validos.csv',
-                        mime='text/csv'
-                    )
+                        st.write(f"Número de registros válidos: {len(valid_rows)}")
+                        
+                        valid_df = pd.DataFrame([data.model_dump() for data in valid_rows])
+                        st.download_button(
+                            label="Baixar dados válidos como CSV",
+                            data=valid_df.to_csv(index=False),
+                            file_name='dados_validos.csv',
+                            mime='text/csv'
+                        )
                     
         except Exception as e:
             st.error(f"Erro ao processar o arquivo: {str(e)}")

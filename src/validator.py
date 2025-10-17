@@ -13,6 +13,9 @@ class PlanilhaVendas(BaseModel):
     Link_clicks: Optional[float] = Field(None, description="Número de cliques no link", nullable=True)
     Impressions: int = Field(0, description="Número de impressões", nullable=True)
     Conversions: Optional[float] = Field(None, description="Número de conversões", nullable=True)
-    Segmentacao: Optional[float] = Field(None, description="Segmentação utilizada na campanha")
+    Segmentacao: str = Field(None, description="Segmentação utilizada na campanha")
     Tipo_de_Anúncio: str = Field(..., description="Tipo de anúncio utilizado")
     Fase: str = Field(..., description="Fase da campanha")
+    
+    class Config:
+        validate_default = True
